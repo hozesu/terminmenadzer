@@ -1,0 +1,36 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+<application
+        android:name=".MyApp"
+        android:allowBackup="true"
+        android:label="TerminMenadzer"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:name=".TerminMenadzerApp"
+
+
+
+
+    <!-- Glavna aktivnost -->
+         <activity
+        android:name=".MainActivity"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+         </activity>
+
+        <!-- Ostale aktivnosti -->
+    <activity android:name=".termini.TerminiActivity" />
+    <activity android:name=".kalendar.KalendarActivity"/>
+    <activity android:name=".pacijenti.PacijentiActivity" />
+    <activity android:name=".kalendar.KalendarActivity" />
+    <activity android:name=".pacijenti.PretragaPacijenataActivity"/>
+    <activity android:name=".termini.NedeljniPregledActivity"/>
+    <activity android:name=".termini.MesecniPregledActivity"/>
+    <activity android:name=".SettingsActivity" />
+    </application>
+</manifest>

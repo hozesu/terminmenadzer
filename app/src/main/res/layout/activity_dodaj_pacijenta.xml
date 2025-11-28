@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DODAJ PACIJENTA"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="28dp" />
+
+        <EditText
+            android:id="@+id/etIme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ime"
+            android:inputType="textPersonName"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/etPrezime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Prezime"
+            android:inputType="textPersonName"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/etDatumRodjenja"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Datum rođenja (dd/mm/gggg)"
+            android:inputType="date"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/etBrojTelefona"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Broj telefona (+xxx xx xxx xxxxx)"
+            android:inputType="phone"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/btnSacuvajPacijenta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sačuvaj"
+            android:layout_marginBottom="16dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btnNazadPacijentMeni"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nazad u meni pacijenata"
+            android:layout_marginTop="32dp" />
+
+    </LinearLayout>
+</ScrollView>

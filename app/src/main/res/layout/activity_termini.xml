@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/txtDatum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Termini za danas"
+        android:textSize="22sp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="8dp"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerTermini"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingTop="8dp">
+        <Button
+            android:id="@+id/btnNedeljniPregled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nedeljni" />
+        <Button
+            android:id="@+id/btnMesecniPregled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mesečni"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+</LinearLayout>

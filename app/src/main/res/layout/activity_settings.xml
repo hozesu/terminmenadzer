@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PODEŠAVANJA"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="28dp" />
+
+    <Button
+        android:id="@+id/btnAdminLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Prijava administratora"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btnBackup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bekapovanje"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btnRestore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Uvoz iz bekapa"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btnShare"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Slanje zakazanih termina"
+        android:layout_marginBottom="16dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/btnNazadGlavniMeniSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nazad u glavni meni"
+        android:layout_marginTop="32dp" />
+</LinearLayout>

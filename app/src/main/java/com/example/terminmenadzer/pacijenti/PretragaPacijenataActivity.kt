@@ -1,0 +1,47 @@
+package com.example.terminmenadzer.pacijenti
+
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.terminmenadzer.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import com.example.terminmenadzer.DatabaseProvider
+
+class PretragaPacijenataActivity : AppCompatActivity() {
+
+    private lateinit var adapter: PacijentiAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_pretraga_pacijenata)
+
+        val edtPretraga = findViewById<EditText>(R.id.edtPretraga)
+        val btnPretrazi = findViewById<Button>(R.id.btnPretrazi)
+        val recycler = findViewById<RecyclerView>(R.id.recyclerPacijenti)
+
+        adapter = PacijentiAdapter(listOf()) { pacijent ->
+            // Ovde dodaj akciju kada se klikne na pacijenta, npr. zakaži termin
+        }
+        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.adapter = adapter
+
+        btnPretrazi.setOnClickListener {
+            val upit = "%${edtPretraga.text.toString()}%"
+            CoroutineScope(Dispatchers.Main).launch {
+                val rezultati = DatabaseProvider.db.pacijentDao().pretraziPacijente(upit)
+                adapter.updateList(rezultati)
+            }
+        }
+
+        // Prikaz svih pacijenata na početku
+        CoroutineScope(Dispatchers.Main).launch {
+            val svi = DatabaseProvider.db.pacijentDao().sviPacijenti()
+            adapter.updateList(svi)
+        }
+    }
+}
