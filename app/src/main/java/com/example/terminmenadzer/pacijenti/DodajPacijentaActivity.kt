@@ -1,5 +1,7 @@
 package com.example.terminmenadzer.pacijenti
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -24,14 +26,11 @@ class DodajPacijentaActivity : AppCompatActivity() {
             private var isFormatting = false
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: android.text.Editable?) {
                 if (isFormatting) return
                 isFormatting = true
-
                 val input = s.toString().replace("/", "")
                 val builder = StringBuilder()
-
                 var i = 0
                 while (i < input.length && i < 8) {
                     builder.append(input[i])
@@ -40,29 +39,25 @@ class DodajPacijentaActivity : AppCompatActivity() {
                     }
                     i++
                 }
-
                 val formatted = builder.toString()
                 if (formatted != s.toString()) {
                     etDatumRodjenja.setText(formatted)
                     etDatumRodjenja.setSelection(formatted.length)
                 }
-
                 isFormatting = false
             }
         })
+
         val etBrojTelefona = findViewById<EditText>(R.id.etBrojTelefona)
-        etBrojTelefona.addTextChangedListener (object : android.text.TextWatcher {
+        etBrojTelefona.addTextChangedListener(object : android.text.TextWatcher {
             private var isFormatting = false
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: android.text.Editable?) {
                 if (isFormatting) return
                 isFormatting = true
-
                 val input = s.toString().replace(" ", "")
                 val builder = StringBuilder()
-
                 var i = 0
                 while (i < input.length && i < 14) {
                     // Dodaj +
@@ -78,16 +73,15 @@ class DodajPacijentaActivity : AppCompatActivity() {
                     }
                     i++
                 }
-
                 val formatted = builder.toString()
                 if (formatted != s.toString()) {
                     etBrojTelefona.setText(formatted)
                     etBrojTelefona.setSelection(formatted.length)
                 }
-
                 isFormatting = false
             }
         })
+
         val btnSacuvaj = findViewById<Button>(R.id.btnSacuvajPacijenta)
         val btnNazad = findViewById<Button>(R.id.btnNazadPacijentMeni)
 
@@ -121,7 +115,7 @@ class DodajPacijentaActivity : AppCompatActivity() {
 
             // UPIS U BAZU
             CoroutineScope(Dispatchers.IO).launch {
-                DatabaseProvider.db.pacijentDao().insert(
+                val noviId = DatabaseProvider.db.pacijentDao().insert(
                     PacijentEntity(
                         ime = ime,
                         prezime = prezime,
@@ -129,9 +123,16 @@ class DodajPacijentaActivity : AppCompatActivity() {
                         telefon = brojTelefona
                     )
                 )
-                // Vraćanje na UI thread za Toast i finish
+                // Vraćanje na UI thread za Toast i rezultat
                 runOnUiThread {
-                    Toast.makeText(this@DodajPacijentaActivity, "Pacijent uspešno sačuvan!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@DodajPacijentaActivity,
+                        "Pacijent uspešno sačuvan!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    val resultIntent = Intent()
+                    resultIntent.putExtra("pacijent_id", noviId.toLong()) // eksplicitno Long!
+                    setResult(Activity.RESULT_OK, resultIntent)
                     finish()
                 }
             }

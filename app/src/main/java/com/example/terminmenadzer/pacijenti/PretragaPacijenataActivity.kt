@@ -1,5 +1,6 @@
 package com.example.terminmenadzer.pacijenti
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -15,6 +16,10 @@ import data.DatabaseProvider
 
 class PretragaPacijenataActivity : AppCompatActivity() {
 
+    companion object {
+        const val REQUEST_DODAJ_PACIJENTA = 2001
+    }
+
     private lateinit var adapter: PacijentiAdapter
     private lateinit var edtPretraga: EditText
 
@@ -29,9 +34,11 @@ class PretragaPacijenataActivity : AppCompatActivity() {
         val recycler = findViewById<RecyclerView>(R.id.recyclerPacijenti)
 
         adapter = PacijentiAdapter(listOf()) { pacijent ->
-            // Ovde dodaj akciju kada se klikne na pacijenta, npr. zakaži termin
+            val resultIntent = Intent()
+            resultIntent.putExtra("pacijent_id", pacijent.id)
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
         }
-
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
 
@@ -41,7 +48,7 @@ class PretragaPacijenataActivity : AppCompatActivity() {
 
         btnNoviPacijent.setOnClickListener {
             val intent = Intent(this, DodajPacijentaActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, REQUEST_DODAJ_PACIJENTA)
         }
 
         btnPretrazi.setOnClickListener {
@@ -65,6 +72,20 @@ class PretragaPacijenataActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             val svi = DatabaseProvider.db.pacijentDao().sviPacijenti()
             adapter.updateList(svi)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_DODAJ_PACIJENTA && resultCode == Activity.RESULT_OK && data != null) {
+            // Pretpostavljamo da DodajPacijentaActivity vraća novog pacijenta preko "pacijent_id"
+            val pacijentId = data.getLongExtra("pacijent_id", -1)
+            if (pacijentId != -1L) {
+                val resultIntent = Intent()
+                resultIntent.putExtra("pacijent_id", pacijentId)
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
+            }
         }
     }
 }

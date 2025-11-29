@@ -31,5 +31,7 @@
     <activity android:name=".termini.MesecniPregledActivity"/>
     <activity android:name=".pacijenti.PretragaPacijenataActivity"/>
     <activity android:name=".pacijenti.DodajPacijentaActivity"/>
+    <activity android:name=".pacijenti.IzmeniPacijentaActivity"/>
+
 </application>
 </manifest>

@@ -10,7 +10,8 @@ import com.example.terminmenadzer.R
 
 class PacijentiAdapter(
     private var pacijenti: List<PacijentEntity>,
-    private val onIzmeniClick: (PacijentEntity) -> Unit
+    private val onIzmeniClick: (PacijentEntity) -> Unit = {},
+    private val onItemClick: (PacijentEntity) -> Unit = {}
 ) : RecyclerView.Adapter<PacijentiAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -36,6 +37,9 @@ class PacijentiAdapter(
 
         holder.btnIzmeniPacijenta.setOnClickListener {
             onIzmeniClick(pacijent)
+        }
+        holder.itemView.setOnClickListener {
+            onItemClick(pacijent)
         }
     }
 

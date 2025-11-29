@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import data.DatabaseProvider
 import android.util.Log
 
-
 class PacijentiActivity : AppCompatActivity() {
 
     private lateinit var adapter: PacijentiAdapter
@@ -28,16 +27,23 @@ class PacijentiActivity : AppCompatActivity() {
         val btnNazad = findViewById<Button>(R.id.btnNazadPacijenti)
         val btnPrethodna = findViewById<Button>(R.id.btnPrethodnaStrana)
         val btnSledeca = findViewById<Button>(R.id.btnSledecaStrana)
-        val btnNoviPacijent = findViewById<Button>(R.id.btnNoviPacijent) // Dodaj dugme "Novi pacijent"
+        val btnNoviPacijent = findViewById<Button>(R.id.btnNoviPacijent)
 
-        adapter = PacijentiAdapter(listOf()) { pacijent ->
-            val intent = Intent(this, com.example.terminmenadzer.pacijenti.IzmeniPacijentaActivity::class.java)
-            intent.putExtra("id", pacijent.id)
-            startActivity(intent)
-        }
+        // NOVO: koristi oba lambda konstruktora iz adaptera
+        adapter = PacijentiAdapter(
+            listOf(),
+            onIzmeniClick = { pacijent ->
+                val intent = Intent(this, com.example.terminmenadzer.pacijenti.IzmeniPacijentaActivity::class.java)
+                intent.putExtra("id", pacijent.id)
+                startActivity(intent)
+            },
+            onItemClick = { pacijent ->
+                // Po potrebi, ovde možeš otvoriti detalje, prikazati dijalog, itd.
+                // Ako ne treba ništa, ostavi prazno
+            }
+        )
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
-
 
         btnNazad.setOnClickListener { finish() }
 
@@ -54,7 +60,6 @@ class PacijentiActivity : AppCompatActivity() {
         }
 
         btnNoviPacijent.setOnClickListener {
-            // Otvori DodajPacijentaActivity
             val intent = Intent(this, com.example.terminmenadzer.pacijenti.DodajPacijentaActivity::class.java)
             startActivity(intent)
         }
@@ -77,6 +82,5 @@ class PacijentiActivity : AppCompatActivity() {
             findViewById<Button>(R.id.btnPrethodnaStrana).isEnabled = trenutnaStrana > 0
             findViewById<Button>(R.id.btnSledecaStrana).isEnabled = lista.size == brojPoStrani
         }
-    } // <-- Ovo je kraj funkcije ucitajPacijente
-
-} // <-- Ovo je kraj klase PacijentiActivity
+    }
+}

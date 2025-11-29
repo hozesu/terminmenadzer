@@ -8,9 +8,11 @@ import androidx.room.Query
 @Dao
 interface PacijentDao {
     @Insert
-    suspend fun insertPacijent(pacijent: PacijentEntity)
+    suspend fun insertPacijent(pacijent: PacijentEntity): Long
+
     @Insert
-    suspend fun insert(pacijent: PacijentEntity)
+    suspend fun insert(pacijent: PacijentEntity): Long
+
     @Update
     suspend fun update(pacijent: PacijentEntity)
     @Delete
@@ -21,9 +23,10 @@ interface PacijentDao {
 
     @Query("SELECT * FROM PacijentEntity")
     suspend fun sviPacijenti(): List<PacijentEntity>
+
     @Query("SELECT * FROM PacijentEntity ORDER BY ime ASC, prezime ASC LIMIT :limit OFFSET :offset")
     suspend fun dajPacijenteStranica(limit: Int, offset: Int): List<PacijentEntity>
+
     @Query("SELECT * FROM PacijentEntity WHERE id = :id")
     suspend fun dajPacijentaPoId(id: Long): PacijentEntity?
-
 }
