@@ -13,10 +13,17 @@
 
     <Button
         android:id="@+id/btnPretrazi"
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:text="Pretraži"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:text="Pretraži" />
+
+    <Button
+        android:id="@+id/btnNoviPacijent"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Novi pacijent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerPacijenti"
@@ -24,4 +31,11 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="8dp"/>
+    <Button
+        android:id="@+id/btnNazad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nazad"
+        android:layout_margin="16dp"
+        />
 </LinearLayout>

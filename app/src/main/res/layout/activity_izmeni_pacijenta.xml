@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Izmeni podatke o pacijentu"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:paddingBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/etIme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ime"
+            android:inputType="textPersonName"
+            android:paddingBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etPrezime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Prezime"
+            android:inputType="textPersonName"
+            android:paddingBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etDatumRodjenja"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Datum rođenja (dd/mm/yyyy)"
+            android:inputType="text"
+            android:paddingBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etTelefon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Telefon"
+            android:inputType="phone"
+            android:paddingBottom="16dp"/>
+
+        <Button
+            android:id="@+id/btnSacuvajIzmene"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sačuvaj izmene"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,18 +1,18 @@
 package com.example.terminmenadzer
 
 import com.example.terminmenadzer.termini.TerminiActivity
-import com.example.terminmenadzer.pacijenti.PacijentiActivity
 import com.example.terminmenadzer.podesavanja.SettingsActivity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
+import data.DatabaseProvider
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DatabaseProvider.init(applicationContext)
+        DatabaseProvider.init(this) // OVO DODAJ
         setContentView(R.layout.activity_main)
 
         // Dugmad za navigaciju

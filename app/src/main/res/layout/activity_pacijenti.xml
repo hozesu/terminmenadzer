@@ -1,42 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="8dp"
-    android:background="@android:color/white"
-    android:layout_marginBottom="4dp">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/txtImePrezime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ime Prezime"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
-    <TextView
-        android:id="@+id/txtBroj"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Broj telefona"
-        android:textSize="16sp"/>
+    <!-- Dugme za dodavanje novog pacijenta -->
+
+    <!-- RecyclerView za listu pacijenata -->
     <Button
-        android:id="@+id/btnListaPacijenata"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnNoviPacijent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lista pacijenata" />
-    <Button
-        android:id="@+id/btnPretragaPacijenataPacijenti"
-        android:layout_width="wrap_content"
+        android:text="Novi pacijent"
+        android:layout_marginTop="16dp" >
+
+    </Button>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPacijenti"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- Navigaciona dugmad na dnu -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pretraga pacijenata" />
-    <Button
-        android:id="@+id/btnDodajPacijenta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dodaj pacijenta" />
-    <Button
-        android:id="@+id/btnNazadGlavniMeniPacijenti"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nazad Na Glavni Meni" />
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnNazadPacijenti"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nazad"/>
+
+        <Button
+            android:id="@+id/btnPrethodnaStrana"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Prethodna"
+            android:layout_marginStart="16dp"/>
+
+        <Button
+            android:id="@+id/btnSledecaStrana"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sledeća"
+            android:layout_marginStart="16dp"/>
+    </LinearLayout>
 </LinearLayout>

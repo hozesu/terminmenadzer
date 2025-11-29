@@ -1,21 +1,18 @@
-package com.example.terminmenadzer.data
+package data
 
 import android.content.Context
 import androidx.room.Room
+import com.example.terminmenadzer.pacijenti.AppDatabase
 
 object DatabaseProvider {
-    // Bazni objekat Room baze
     lateinit var db: AppDatabase
         private set
 
-    // Inicijalizacija baze, pozivaš iz Application klase
     fun init(context: Context) {
         db = Room.databaseBuilder(
-            context,
+            context.applicationContext,
             AppDatabase::class.java,
             "termin_menadzer_db"
-        )
-            .fallbackToDestructiveMigration()
-            .build()
+        ).build()
     }
 }

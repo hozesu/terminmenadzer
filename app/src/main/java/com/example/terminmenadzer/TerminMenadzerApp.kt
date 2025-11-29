@@ -1,4 +1,5 @@
 package com.example.terminmenadzer
+import data.DatabaseProvider
 
 import android.app.Application
 

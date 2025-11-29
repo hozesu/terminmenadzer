@@ -4,36 +4,43 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.example.terminmenadzer.R
 
 class PacijentiAdapter(
     private var pacijenti: List<PacijentEntity>,
-    private val onPacijentClick: (PacijentEntity) -> Unit
-) : RecyclerView.Adapter<PacijentiAdapter.PacijentViewHolder>() {
+    private val onIzmeniClick: (PacijentEntity) -> Unit
+) : RecyclerView.Adapter<PacijentiAdapter.ViewHolder>() {
 
-    inner class PacijentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val txtImePrezime: TextView = itemView.findViewById(R.id.txtImePrezime)
-        val txtBroj: TextView = itemView.findViewById(R.id.txtBroj)
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tvImePrezime = itemView.findViewById<TextView>(R.id.tvImePrezime)
+        val tvDatumRodjenja = itemView.findViewById<TextView>(R.id.tvDatumRodjenja)
+        val tvTelefon = itemView.findViewById<TextView>(R.id.tvTelefon)
+        val btnIzmeniPacijenta = itemView.findViewById<Button>(R.id.btnIzmeniPacijenta)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PacijentViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_pacijent, parent, false)
-        return PacijentViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: PacijentViewHolder, position: Int) {
-        val pacijent = pacijenti[position]
-        holder.txtImePrezime.text = "${pacijent.ime} ${pacijent.prezime}"
-        holder.txtBroj.text = pacijent.brojTelefona
-        holder.itemView.setOnClickListener { onPacijentClick(pacijent) }
+        return ViewHolder(view)
     }
 
     override fun getItemCount(): Int = pacijenti.size
 
-    fun updateList(newList: List<PacijentEntity>) {
-        pacijenti = newList
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val pacijent = pacijenti[position]
+        holder.tvImePrezime.text = "${pacijent.ime} ${pacijent.prezime}"
+        holder.tvDatumRodjenja.text = pacijent.datumRodjenja
+        holder.tvTelefon.text = pacijent.telefon
+
+        holder.btnIzmeniPacijenta.setOnClickListener {
+            onIzmeniClick(pacijent)
+        }
+    }
+
+    fun updateList(novaLista: List<PacijentEntity>) {
+        this.pacijenti = novaLista
         notifyDataSetChanged()
     }
 }
