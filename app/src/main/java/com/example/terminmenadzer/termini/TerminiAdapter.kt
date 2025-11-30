@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.terminmenadzer.R
 
 class TerminiAdapter(
-    private val termini: List<Termin>,
+    private var termini: List<Termin>,
     private val onTerminClick: (Termin) -> Unit
 ) : RecyclerView.Adapter<TerminiAdapter.TerminViewHolder>() {
 
     inner class TerminViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val txtVreme: TextView = itemView.findViewById(R.id.txtVreme)
+        val txtPacijent: TextView = itemView.findViewById(R.id.txtPacijent)
         val container: View = itemView.findViewById(R.id.terminContainer)
     }
 
@@ -27,19 +28,29 @@ class TerminiAdapter(
     override fun onBindViewHolder(holder: TerminViewHolder, position: Int) {
         val termin = termini[position]
         holder.txtVreme.text = termin.vreme
-        // Boje pozadine
+
         if (termin.zauzet) {
             holder.container.setBackgroundColor(Color.parseColor("#FFCDD2")) // svetlo crvena
-            holder.txtVreme.setTextColor(Color.parseColor("#B71C1C")) // tamnocrvena, bolja čitljivost
+            holder.txtVreme.setTextColor(Color.parseColor("#B71C1C")) // tamnocrvena
+            // Prikazi ime i telefon pacijenta
+            holder.txtPacijent.visibility = View.VISIBLE
+            holder.txtPacijent.text = "${termin.pacijentIme ?: ""} ${termin.pacijentTelefon ?: ""}".trim()
         } else {
             holder.container.setBackgroundColor(Color.parseColor("#C8E6C9")) // svetlo zelena
-            holder.txtVreme.setTextColor(Color.parseColor("#1B5E20")) // tamnozelena, bolja čitljivost
+            holder.txtVreme.setTextColor(Color.parseColor("#1B5E20")) // tamnozelena
+            holder.txtPacijent.visibility = View.GONE
         }
-        // Klik na termin
+
         holder.container.setOnClickListener {
             onTerminClick(termin)
         }
     }
 
     override fun getItemCount(): Int = termini.size
+
+    // OVO DODAJ!
+    fun updateList(noviTermini: List<Termin>) {
+        this.termini = noviTermini
+        notifyDataSetChanged()
+    }
 }

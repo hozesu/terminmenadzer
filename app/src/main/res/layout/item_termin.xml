@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/terminContainer"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="4dp"
-    android:background="@color/white">
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/txtVreme"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|center_horizontal"
+        android:layout_height="wrap_content"
         android:textSize="18sp"
+        android:textStyle="bold"
         android:text="07:00"
-        android:padding="8dp"/>
-</FrameLayout>
+        android:gravity="center_vertical|center_horizontal"
+        />
+
+    <TextView
+        android:id="@+id/txtPacijent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:visibility="gone"
+        android:text="Ime Prezime 0601234567"
+        android:gravity="center_vertical|center_horizontal"
+        />
+</LinearLayout>

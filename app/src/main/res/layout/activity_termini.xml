@@ -34,12 +34,14 @@
             android:id="@+id/btnNedeljniPregled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nedeljni" />
+            android:text="Nedeljni"
+            android:paddingBottom="28dp"/>
         <Button
             android:id="@+id/btnMesecniPregled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mesečni"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp"
+            android:paddingBottom="28dp"/>
     </LinearLayout>
 </LinearLayout>

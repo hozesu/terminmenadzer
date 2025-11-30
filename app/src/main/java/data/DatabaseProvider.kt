@@ -13,6 +13,8 @@ object DatabaseProvider {
             context.applicationContext,
             AppDatabase::class.java,
             "termin_menadzer_db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration() // <-- OVO DODAJ OVDE
+            .build()
     }
 }

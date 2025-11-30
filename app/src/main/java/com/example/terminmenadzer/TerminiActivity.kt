@@ -22,8 +22,11 @@ class TerminiActivity : AppCompatActivity() {
     }
 
     private var izabranoVreme: String? = null
-    private lateinit var terminiZaDan: MutableList<Termin>
     private lateinit var adapter: TerminiAdapter
+    private val datum: String by lazy {
+        val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+        sdf.format(Date())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,13 +37,10 @@ class TerminiActivity : AppCompatActivity() {
         val btnNedeljni = findViewById<Button>(R.id.btnNedeljniPregled)
         val btnMesecni = findViewById<Button>(R.id.btnMesecniPregled)
 
-        val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        txtDatum.text = "Termini za danas: ${sdf.format(Date())}"
+        txtDatum.text = "Termini za danas: $datum"
 
-        // Učitaj termine (možeš ovde kasnije iz baze)
-        terminiZaDan = generisiTermineZaDan(listOf()).toMutableList()
-
-        adapter = TerminiAdapter(terminiZaDan) { termin ->
+        // Adapter inicijalno prazan, puniće se iz baze
+        adapter = TerminiAdapter(mutableListOf()) { termin ->
             if (!termin.zauzet) {
                 izabranoVreme = termin.vreme
                 val intent = Intent(this, PretragaPacijenataActivity::class.java)
@@ -56,6 +56,9 @@ class TerminiActivity : AppCompatActivity() {
         btnMesecni.setOnClickListener {
             startActivity(Intent(this, MesecniPregledActivity::class.java))
         }
+
+        // Učitaj termine iz baze
+        ucitajTermine()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -65,37 +68,70 @@ class TerminiActivity : AppCompatActivity() {
             val vreme = izabranoVreme
 
             if (pacijentId != -1L && vreme != null) {
-                // Pronađi pacijenta u bazi
                 CoroutineScope(Dispatchers.IO).launch {
-                    val pacijent = DatabaseProvider.db.pacijentDao().dajPacijentaPoId(pacijentId)
-                    // Pronađi termin i podesi ga
+                    val terminEntity = DatabaseProvider.db.terminDao().nadjiTerminPoVremenu(datum, vreme)
+                    if (terminEntity != null) {
+                        val noviTermin = terminEntity.copy(zauzet = true, pacijentId = pacijentId)
+                        DatabaseProvider.db.terminDao().update(noviTermin)
+                    }
                     withContext(Dispatchers.Main) {
-                        val termin = terminiZaDan.find { it.vreme == vreme }
-                        if (termin != null && pacijent != null) {
-                            termin.zauzet = true
-                            termin.pacijentId = pacijent.id
-                            termin.pacijentIme = "${pacijent.ime} ${pacijent.prezime}"
-                            termin.pacijentTelefon = pacijent.telefon
-                            adapter.notifyDataSetChanged()
-                        }
+                        ucitajTermine()
                     }
                 }
             }
         }
     }
 
-    private fun generisiTermineZaDan(zauzetiTermini: List<String>): List<Termin> {
-        val termini = mutableListOf<Termin>()
+    // Učitava sve termine za danas iz baze, puni adapter
+    private fun ucitajTermine() {
+        CoroutineScope(Dispatchers.IO).launch {
+            var termini = DatabaseProvider.db.terminDao().terminiZaDan(datum)
+            // Ako nema termina za danas, generiši ih i upiši u bazu
+            if (termini.isEmpty()) {
+                val noviTermini = generisiTermineZaDan().map {
+                    TerminEntity(datum = datum, vreme = it, zauzet = false)
+                }
+                DatabaseProvider.db.terminDao().insertAll(noviTermini)
+                termini = DatabaseProvider.db.terminDao().terminiZaDan(datum)
+            }
+
+            // Poveži podatke o pacijentu za svaki termin
+            val prikazTermini = termini.map { termin ->
+                var ime = ""
+                var telefon = ""
+                if (termin.pacijentId != null) {
+                    val pacijent = DatabaseProvider.db.pacijentDao().dajPacijentaPoId(termin.pacijentId)
+                    if (pacijent != null) {
+                        ime = "${pacijent.ime} ${pacijent.prezime}"
+                        telefon = pacijent.telefon
+                    }
+                }
+                Termin(
+                    vreme = termin.vreme,
+                    zauzet = termin.zauzet,
+                    pacijentId = termin.pacijentId,
+                    pacijentIme = ime,
+                    pacijentTelefon = telefon
+                )
+            }
+            withContext(Dispatchers.Main) {
+                adapter.updateList(prikazTermini)
+            }
+        }
+    }
+
+    // Generiše sva vremena termina za dan (format HH:mm)
+    private fun generisiTermineZaDan(): List<String> {
         val satovi = 7..19
         val minuti = listOf(0, 15, 30, 45)
+        val lista = mutableListOf<String>()
         for (sat in satovi) {
             for (minut in minuti) {
                 if (sat == 19 && minut > 0) break
-                val vreme = "%02d:%02d".format(sat, minut)
-                val zauzet = zauzetiTermini.contains(vreme)
-                termini.add(Termin(vreme, zauzet))
+                lista.add("%02d:%02d".format(sat, minut))
             }
         }
-        return termini
+        return lista
     }
 }
+
