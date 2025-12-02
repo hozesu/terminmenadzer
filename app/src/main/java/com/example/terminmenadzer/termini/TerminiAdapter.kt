@@ -16,6 +16,7 @@ class TerminiAdapter(
     inner class TerminViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val txtVreme: TextView = itemView.findViewById(R.id.txtVreme)
         val txtPacijent: TextView = itemView.findViewById(R.id.txtPacijent)
+        val txtKomentar: TextView = itemView.findViewById(R.id.txtKomentar) // Dodato za komentar
         val container: View = itemView.findViewById(R.id.terminContainer)
     }
 
@@ -41,6 +42,14 @@ class TerminiAdapter(
             holder.txtPacijent.visibility = View.GONE
         }
 
+        // Prikaz komentara za termin
+        if (termin.komentar.isNullOrBlank()) {
+            holder.txtKomentar.visibility = View.GONE
+        } else {
+            holder.txtKomentar.visibility = View.VISIBLE
+            holder.txtKomentar.text = "Komentar: ${termin.komentar}"
+        }
+
         holder.container.setOnClickListener {
             onTerminClick(termin)
         }
@@ -48,7 +57,6 @@ class TerminiAdapter(
 
     override fun getItemCount(): Int = termini.size
 
-    // OVO DODAJ!
     fun updateList(noviTermini: List<TerminEntity>) {
         this.termini = noviTermini
         notifyDataSetChanged()

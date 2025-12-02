@@ -1,9 +1,11 @@
 package com.example.terminmenadzer.termini
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,21 +26,26 @@ class TerminiActivity : AppCompatActivity() {
 
     private var izabranoVreme: String? = null
     private lateinit var adapter: TerminiAdapter
-    private val datum: String by lazy {
-        val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        sdf.format(Date())
-    }
+
+    // Sada je izabraniDatum polje koje se menja klikom na Kalendar
+    private var izabraniDatum: String = getDanasnjiDatum()
+
+    private lateinit var txtDatum: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_termini)
 
-        val txtDatum = findViewById<TextView>(R.id.txtDatum)
+        txtDatum = findViewById(R.id.txtDatum)
+        val btnKalendar = findViewById<Button>(R.id.btnKalendar)
         val recyclerTermini = findViewById<RecyclerView>(R.id.recyclerTermini)
-        val btnNedeljni = findViewById<Button>(R.id.btnNedeljniPregled)
-        val btnMesecni = findViewById<Button>(R.id.btnMesecniPregled)
 
-        txtDatum.text = "Termini za danas: $datum"
+        // Prikaz naslova sa izabranim datumom
+        txtDatum.text = "Termini za dan: $izabraniDatum"
+
+        btnKalendar.setOnClickListener {
+            prikaziKalendar()
+        }
 
         adapter = TerminiAdapter(mutableListOf()) { termin ->
             if (termin.zauzet) {
@@ -52,14 +59,34 @@ class TerminiActivity : AppCompatActivity() {
         recyclerTermini.layoutManager = LinearLayoutManager(this)
         recyclerTermini.adapter = adapter
 
-        btnNedeljni.setOnClickListener {
-            startActivity(Intent(this, NedeljniPregledActivity::class.java))
-        }
-        btnMesecni.setOnClickListener {
-            startActivity(Intent(this, MesecniPregledActivity::class.java))
-        }
-
         ucitajTermine()
+    }
+
+    private fun prikaziKalendar() {
+        val cal = Calendar.getInstance()
+        // Parsiraj trenutno izabrani datum ako nije današnji
+        try {
+            val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+            val date = sdf.parse(izabraniDatum)
+            if (date != null) cal.time = date
+        } catch (_: Exception) {}
+
+        val year = cal.get(Calendar.YEAR)
+        val month = cal.get(Calendar.MONTH)
+        val day = cal.get(Calendar.DAY_OF_MONTH)
+
+        DatePickerDialog(this, { _, y, m, d ->
+            val noviDatum = String.format("%02d.%02d.%04d", d, m + 1, y)
+            izabraniDatum = noviDatum
+            txtDatum.text = "Termini za dan: $izabraniDatum"
+            ucitajTermine()
+        }, year, month, day).show()
+    }
+
+    // Funkcija za današnji datum
+    private fun getDanasnjiDatum(): String {
+        val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+        return sdf.format(Date())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -71,34 +98,64 @@ class TerminiActivity : AppCompatActivity() {
             val vreme = izabranoVreme
 
             if (pacijentId != -1L && vreme != null) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val terminEntity = DatabaseProvider.db.terminDao().nadjiTerminPoVremenu(datum, vreme)
-                    if (terminEntity != null) {
-                        val noviTermin = terminEntity.copy(
-                            zauzet = true,
-                            pacijentId = pacijentId,
-                            pacijentIme = pacijentIme,
-                            pacijentTelefon = pacijentTelefon
-                        )
-                        DatabaseProvider.db.terminDao().update(noviTermin)
+                // Prikaži dijalog za unos komentara pre snimanja termina
+                val komentarEditText = EditText(this)
+                komentarEditText.hint = "Komentar za termin (opciono)"
+
+                AlertDialog.Builder(this)
+                    .setTitle("Dodaj komentar")
+                    .setView(komentarEditText)
+                    .setPositiveButton("Sačuvaj") { _, _ ->
+                        val komentar = komentarEditText.text.toString()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val terminEntity = DatabaseProvider.db.terminDao().nadjiTerminPoVremenu(izabraniDatum, vreme)
+                            if (terminEntity != null) {
+                                val noviTermin = terminEntity.copy(
+                                    zauzet = true,
+                                    pacijentId = pacijentId,
+                                    pacijentIme = pacijentIme,
+                                    pacijentTelefon = pacijentTelefon,
+                                    komentar = if (komentar.isNotBlank()) komentar else null
+                                )
+                                DatabaseProvider.db.terminDao().update(noviTermin)
+                            }
+                            withContext(Dispatchers.Main) {
+                                ucitajTermine()
+                            }
+                        }
                     }
-                    withContext(Dispatchers.Main) {
-                        ucitajTermine()
+                    .setNegativeButton("Preskoči") { _, _ ->
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val terminEntity = DatabaseProvider.db.terminDao().nadjiTerminPoVremenu(izabraniDatum, vreme)
+                            if (terminEntity != null) {
+                                val noviTermin = terminEntity.copy(
+                                    zauzet = true,
+                                    pacijentId = pacijentId,
+                                    pacijentIme = pacijentIme,
+                                    pacijentTelefon = pacijentTelefon,
+                                    komentar = null
+                                )
+                                DatabaseProvider.db.terminDao().update(noviTermin)
+                            }
+                            withContext(Dispatchers.Main) {
+                                ucitajTermine()
+                            }
+                        }
                     }
-                }
+                    .show()
             }
         }
     }
 
     private fun ucitajTermine() {
         CoroutineScope(Dispatchers.IO).launch {
-            var termini = DatabaseProvider.db.terminDao().terminiZaDan(datum)
+            var termini = DatabaseProvider.db.terminDao().terminiZaDan(izabraniDatum)
             if (termini.isEmpty()) {
                 val noviTermini = generisiTermineZaDan().map {
-                    TerminEntity(datum = datum, vreme = it, zauzet = false)
+                    TerminEntity(datum = izabraniDatum, vreme = it, zauzet = false)
                 }
                 DatabaseProvider.db.terminDao().insertAll(noviTermini)
-                termini = DatabaseProvider.db.terminDao().terminiZaDan(datum)
+                termini = DatabaseProvider.db.terminDao().terminiZaDan(izabraniDatum)
             }
 
             val prikazTermini = termini.map { termin ->
@@ -112,12 +169,13 @@ class TerminiActivity : AppCompatActivity() {
                     }
                 }
                 TerminEntity(
-                    datum = termin.datum,               // <-- OVO DODAJ
+                    datum = termin.datum,
                     vreme = termin.vreme,
                     zauzet = termin.zauzet,
                     pacijentId = termin.pacijentId,
                     pacijentIme = ime,
-                    pacijentTelefon = telefon
+                    pacijentTelefon = telefon,
+                    komentar = termin.komentar // dodato!
                 )
             }
             withContext(Dispatchers.Main) {
@@ -141,7 +199,7 @@ class TerminiActivity : AppCompatActivity() {
         return lista
     }
 
-    private fun handleIzmeni(termin: TerminEntity  ) {
+    private fun handleIzmeni(termin: TerminEntity) {
         showIzmeniDialog(termin)
     }
 
@@ -150,8 +208,13 @@ class TerminiActivity : AppCompatActivity() {
         val txtPacijent = dialogView.findViewById<TextView>(R.id.txtTrenutniPacijent)
         val btnZameni = dialogView.findViewById<Button>(R.id.btnZameniPacijenta)
         val btnOslobodi = dialogView.findViewById<Button>(R.id.btnOslobodi)
+        val etKomentar = dialogView.findViewById<EditText>(R.id.etKomentar)
+        val btnSacuvajKomentar = dialogView.findViewById<Button>(R.id.btnSacuvajKomentar)
+        val btnObrisiKomentar = dialogView.findViewById<Button>(R.id.btnObrisiKomentar)
 
         txtPacijent.text = "Pacijent: ${termin.pacijentIme ?: ""}\nTelefon: ${termin.pacijentTelefon ?: ""}"
+
+        etKomentar?.setText(termin.komentar ?: "")
 
         val dialog = AlertDialog.Builder(this)
             .setTitle("Izmeni termin")
@@ -169,14 +232,42 @@ class TerminiActivity : AppCompatActivity() {
             oslobodiTermin(termin)
         }
 
+        btnSacuvajKomentar.setOnClickListener {
+            val noviKomentar = etKomentar.text.toString()
+            CoroutineScope(Dispatchers.IO).launch {
+                val ent = DatabaseProvider.db.terminDao().nadjiTerminPoVremenu(izabraniDatum, termin.vreme)
+                if (ent != null) {
+                    val novi = ent.copy(komentar = if (noviKomentar.isNotBlank()) noviKomentar else null)
+                    DatabaseProvider.db.terminDao().update(novi)
+                }
+                withContext(Dispatchers.Main) {
+                    ucitajTermine()
+                }
+            }
+            dialog.dismiss()
+        }
+        btnObrisiKomentar.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                val ent = DatabaseProvider.db.terminDao().nadjiTerminPoVremenu(izabraniDatum, termin.vreme)
+                if (ent != null) {
+                    val novi = ent.copy(komentar = null)
+                    DatabaseProvider.db.terminDao().update(novi)
+                }
+                withContext(Dispatchers.Main) {
+                    ucitajTermine()
+                }
+            }
+            dialog.dismiss()
+        }
+
         dialog.show()
     }
 
     private fun oslobodiTermin(termin: TerminEntity) {
         CoroutineScope(Dispatchers.IO).launch {
-            val ent = DatabaseProvider.db.terminDao().nadjiTerminPoVremenu(datum, termin.vreme)
+            val ent = DatabaseProvider.db.terminDao().nadjiTerminPoVremenu(izabraniDatum, termin.vreme)
             if (ent != null) {
-                val novi = ent.copy(zauzet = false, pacijentId = null, pacijentIme = null, pacijentTelefon = null)
+                val novi = ent.copy(zauzet = false, pacijentId = null, pacijentIme = null, pacijentTelefon = null, komentar = null)
                 DatabaseProvider.db.terminDao().update(novi)
             }
             withContext(Dispatchers.Main) {

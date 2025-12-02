@@ -11,5 +11,6 @@ data class TerminEntity(
     val zauzet: Boolean,
     val pacijentId: Long? = null,
     val pacijentIme: String? = null,
-    val pacijentTelefon: String? = null
+    val pacijentTelefon: String? = null,
+    val komentar: String? = null // <-- dodaj ovo polje
 )

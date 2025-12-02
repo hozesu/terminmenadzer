@@ -17,7 +17,6 @@
         android:textColor="@android:color/black"
         android:text="08:00"
         android:gravity="center"/>
-        />
 
     <TextView
         android:id="@+id/txtPacijent"
@@ -28,5 +27,24 @@
         android:visibility="gone"
         android:text="Ime Prezime 0601234567"
         android:gravity="center"/>
-        />
+
+    <TextView
+        android:id="@+id/txtKomentar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="#666"
+        android:visibility="gone"
+        android:gravity="center"
+        android:text="Komentar za termin" />
+
+    <TextView
+        android:id="@+id/txtKomentar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:paddingTop="4dp"
+        android:visibility="gone"
+        android:text="Komentar za termin" />
 </LinearLayout>

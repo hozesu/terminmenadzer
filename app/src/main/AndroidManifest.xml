@@ -8,8 +8,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        android:name=".TerminMenadzerApp"
-
 
 
 
@@ -25,7 +23,6 @@
 
         <!-- Ostale aktivnosti -->
     <activity android:name=".termini.TerminiActivity" />
-    <activity android:name=".kalendar.KalendarActivity"/>
     <activity android:name=".PacijentiActivity"/>
     <activity android:name=".termini.NedeljniPregledActivity"/>
     <activity android:name=".termini.MesecniPregledActivity"/>

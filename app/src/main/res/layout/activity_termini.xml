@@ -15,6 +15,13 @@
         android:layout_gravity="center_horizontal"
         android:paddingBottom="8dp"
         />
+    <Button
+        android:id="@+id/btnKalendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kalendar"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerTermini"
@@ -30,18 +37,5 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:paddingTop="8dp">
-        <Button
-            android:id="@+id/btnNedeljniPregled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nedeljni"
-            android:paddingBottom="28dp"/>
-        <Button
-            android:id="@+id/btnMesecniPregled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mesečni"
-            android:layout_marginStart="8dp"
-            android:paddingBottom="28dp"/>
     </LinearLayout>
 </LinearLayout>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -12,6 +13,36 @@
         android:text="Pacijent: "
         android:textSize="18sp" />
 
+    <EditText
+        android:id="@+id/etKomentar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Komentar za termin"
+        android:textSize="15sp"
+        android:layout_marginTop="12dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btnSacuvajKomentar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Sačuvaj komentar" />
+
+        <Button
+            android:id="@+id/btnObrisiKomentar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Obriši komentar"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
     <Button
         android:id="@+id/btnZameniPacijenta"
         android:layout_width="match_parent"
@@ -19,15 +50,10 @@
         android:text="Zameni pacijenta"
         android:layout_marginTop="16dp" />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
     <Button
         android:id="@+id/btnOslobodi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Oslobodi termin"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="8dp"/>
 </LinearLayout>
