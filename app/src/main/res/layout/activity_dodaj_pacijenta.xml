@@ -24,15 +24,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Ime"
-            android:inputType="textPersonName"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:inputType="textCapWords|textPersonName" />
 
         <EditText
             android:id="@+id/etPrezime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Prezime"
-            android:inputType="textPersonName"
+            android:inputType="textCapWords|textPersonName"
             android:layout_marginBottom="16dp" />
 
         <EditText

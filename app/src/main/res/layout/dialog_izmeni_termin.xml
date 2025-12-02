@@ -1,0 +1,33 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/txtTrenutniPacijent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pacijent: "
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btnZameniPacijenta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Zameni pacijenta"
+        android:layout_marginTop="16dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/btnOslobodi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Oslobodi termin"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

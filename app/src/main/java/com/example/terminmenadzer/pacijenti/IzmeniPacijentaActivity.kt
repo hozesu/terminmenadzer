@@ -1,6 +1,8 @@
 package com.example.terminmenadzer.pacijenti
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -11,10 +13,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.terminmenadzer.R
+import java.util.Locale
 
 class IzmeniPacijentaActivity : AppCompatActivity() {
 
     private var pacijentId: Long = -1
+
+    // Funkcija za velika početna slova
+    private fun String.capitalizeWords(): String =
+        split(" ").joinToString(" ") { it.replaceFirstChar { c -> c.uppercaseChar() } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,8 +31,66 @@ class IzmeniPacijentaActivity : AppCompatActivity() {
         val etIme = findViewById<EditText>(R.id.etIme)
         val etPrezime = findViewById<EditText>(R.id.etPrezime)
         val etDatumRodjenja = findViewById<EditText>(R.id.etDatumRodjenja)
-        val etTelefon = findViewById<EditText>(R.id.etTelefon)
+        val etTelefon = findViewById<EditText>(R.id.etBrojTelefona)
         val btnSacuvajIzmene = findViewById<Button>(R.id.btnSacuvajIzmene)
+
+        // --- Automatsko formatiranje datuma rodjenja ---
+        etDatumRodjenja.addTextChangedListener(object : TextWatcher {
+            private var isFormatting: Boolean = false
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (isFormatting) return
+                isFormatting = true
+
+                val digits = s.toString().replace("/", "")
+                val builder = StringBuilder()
+                for (i in digits.indices) {
+                    builder.append(digits[i])
+                    if ((i == 1 || i == 3) && i != digits.length - 1) {
+                        builder.append("/")
+                    }
+                }
+                etDatumRodjenja.setText(builder.toString())
+                etDatumRodjenja.setSelection(builder.length)
+                isFormatting = false
+            }
+        })
+
+        // --- Automatsko formatiranje broja telefona ---
+        etTelefon.addTextChangedListener(object : TextWatcher {
+            private var isFormatting: Boolean = false
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (isFormatting) return
+                isFormatting = true
+
+                val digits = s.toString().replace(" ", "").replace("+", "")
+                val builder = StringBuilder()
+                var i = 0
+
+                if (digits.isNotEmpty()) builder.append("+")
+                while (i < digits.length) {
+                    when (i) {
+                        0 -> builder.append(digits.substring(0, minOf(3, digits.length)))
+                        3 -> builder.append(" " + digits.substring(3, minOf(5, digits.length)))
+                        5 -> builder.append(" " + digits.substring(5, minOf(8, digits.length)))
+                        8 -> builder.append(" " + digits.substring(8, minOf(13, digits.length)))
+                    }
+                    i = when {
+                        i < 3 -> 3
+                        i < 5 -> 5
+                        i < 8 -> 8
+                        else -> digits.length
+                    }
+                }
+
+                etTelefon.setText(builder.toString())
+                etTelefon.setSelection(builder.length)
+                isFormatting = false
+            }
+        })
 
         pacijentId = intent.getLongExtra("id", -1)
         Log.d("IzmeniPacijenta", "Primljen id: $pacijentId")
@@ -55,8 +120,9 @@ class IzmeniPacijentaActivity : AppCompatActivity() {
         }
 
         btnSacuvajIzmene.setOnClickListener {
-            val ime = etIme.text.toString().trim()
-            val prezime = etPrezime.text.toString().trim()
+            // Automatski velika početna slova za ime i prezime
+            val ime = etIme.text.toString().trim().capitalizeWords()
+            val prezime = etPrezime.text.toString().trim().capitalizeWords()
             val datumRodjenja = etDatumRodjenja.text.toString().trim()
             val telefon = etTelefon.text.toString().trim()
 

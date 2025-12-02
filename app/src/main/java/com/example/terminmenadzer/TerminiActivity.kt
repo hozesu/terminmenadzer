@@ -14,6 +14,7 @@ import data.DatabaseProvider
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.appcompat.app.AlertDialog
 
 class TerminiActivity : AppCompatActivity() {
 
@@ -39,9 +40,10 @@ class TerminiActivity : AppCompatActivity() {
 
         txtDatum.text = "Termini za danas: $datum"
 
-        // Adapter inicijalno prazan, puniće se iz baze
         adapter = TerminiAdapter(mutableListOf()) { termin ->
-            if (!termin.zauzet) {
+            if (termin.zauzet) {
+                handleIzmeni(termin)
+            } else {
                 izabranoVreme = termin.vreme
                 val intent = Intent(this, PretragaPacijenataActivity::class.java)
                 startActivityForResult(intent, REQUEST_SELECT_PACIJENT)
@@ -57,7 +59,6 @@ class TerminiActivity : AppCompatActivity() {
             startActivity(Intent(this, MesecniPregledActivity::class.java))
         }
 
-        // Učitaj termine iz baze
         ucitajTermine()
     }
 
@@ -65,13 +66,20 @@ class TerminiActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_SELECT_PACIJENT && resultCode == Activity.RESULT_OK && data != null) {
             val pacijentId = data.getLongExtra("pacijent_id", -1)
+            val pacijentIme = data.getStringExtra("pacijent_ime")
+            val pacijentTelefon = data.getStringExtra("pacijent_telefon")
             val vreme = izabranoVreme
 
             if (pacijentId != -1L && vreme != null) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val terminEntity = DatabaseProvider.db.terminDao().nadjiTerminPoVremenu(datum, vreme)
                     if (terminEntity != null) {
-                        val noviTermin = terminEntity.copy(zauzet = true, pacijentId = pacijentId)
+                        val noviTermin = terminEntity.copy(
+                            zauzet = true,
+                            pacijentId = pacijentId,
+                            pacijentIme = pacijentIme,
+                            pacijentTelefon = pacijentTelefon
+                        )
                         DatabaseProvider.db.terminDao().update(noviTermin)
                     }
                     withContext(Dispatchers.Main) {
@@ -82,11 +90,9 @@ class TerminiActivity : AppCompatActivity() {
         }
     }
 
-    // Učitava sve termine za danas iz baze, puni adapter
     private fun ucitajTermine() {
         CoroutineScope(Dispatchers.IO).launch {
             var termini = DatabaseProvider.db.terminDao().terminiZaDan(datum)
-            // Ako nema termina za danas, generiši ih i upiši u bazu
             if (termini.isEmpty()) {
                 val noviTermini = generisiTermineZaDan().map {
                     TerminEntity(datum = datum, vreme = it, zauzet = false)
@@ -95,7 +101,6 @@ class TerminiActivity : AppCompatActivity() {
                 termini = DatabaseProvider.db.terminDao().terminiZaDan(datum)
             }
 
-            // Poveži podatke o pacijentu za svaki termin
             val prikazTermini = termini.map { termin ->
                 var ime = ""
                 var telefon = ""
@@ -106,7 +111,8 @@ class TerminiActivity : AppCompatActivity() {
                         telefon = pacijent.telefon
                     }
                 }
-                Termin(
+                TerminEntity(
+                    datum = termin.datum,               // <-- OVO DODAJ
                     vreme = termin.vreme,
                     zauzet = termin.zauzet,
                     pacijentId = termin.pacijentId,
@@ -120,18 +126,62 @@ class TerminiActivity : AppCompatActivity() {
         }
     }
 
-    // Generiše sva vremena termina za dan (format HH:mm)
     private fun generisiTermineZaDan(): List<String> {
-        val satovi = 7..19
-        val minuti = listOf(0, 15, 30, 45)
         val lista = mutableListOf<String>()
+        val satovi = 8..17 // od 08 do 17
+        val minuti = listOf(0, 30) // na svakih 30 minuta
+
         for (sat in satovi) {
             for (minut in minuti) {
-                if (sat == 19 && minut > 0) break
+                // poslednji termin u 17:00, IGNORIŠE 17:30
+                if (sat == 17 && minut > 0) break
                 lista.add("%02d:%02d".format(sat, minut))
             }
         }
         return lista
     }
-}
 
+    private fun handleIzmeni(termin: TerminEntity  ) {
+        showIzmeniDialog(termin)
+    }
+
+    private fun showIzmeniDialog(termin: TerminEntity) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_izmeni_termin, null)
+        val txtPacijent = dialogView.findViewById<TextView>(R.id.txtTrenutniPacijent)
+        val btnZameni = dialogView.findViewById<Button>(R.id.btnZameniPacijenta)
+        val btnOslobodi = dialogView.findViewById<Button>(R.id.btnOslobodi)
+
+        txtPacijent.text = "Pacijent: ${termin.pacijentIme ?: ""}\nTelefon: ${termin.pacijentTelefon ?: ""}"
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Izmeni termin")
+            .setView(dialogView)
+            .create()
+
+        btnZameni.setOnClickListener {
+            izabranoVreme = termin.vreme
+            dialog.dismiss()
+            val intent = Intent(this, PretragaPacijenataActivity::class.java)
+            startActivityForResult(intent, REQUEST_SELECT_PACIJENT)
+        }
+        btnOslobodi.setOnClickListener {
+            dialog.dismiss()
+            oslobodiTermin(termin)
+        }
+
+        dialog.show()
+    }
+
+    private fun oslobodiTermin(termin: TerminEntity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val ent = DatabaseProvider.db.terminDao().nadjiTerminPoVremenu(datum, termin.vreme)
+            if (ent != null) {
+                val novi = ent.copy(zauzet = false, pacijentId = null, pacijentIme = null, pacijentTelefon = null)
+                DatabaseProvider.db.terminDao().update(novi)
+            }
+            withContext(Dispatchers.Main) {
+                ucitajTermine()
+            }
+        }
+    }
+}

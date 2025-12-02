@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.terminmenadzer.R
 
 class TerminiAdapter(
-    private var termini: List<Termin>,
-    private val onTerminClick: (Termin) -> Unit
+    private var termini: List<TerminEntity>,
+    private val onTerminClick: (TerminEntity) -> Unit
 ) : RecyclerView.Adapter<TerminiAdapter.TerminViewHolder>() {
 
     inner class TerminViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -49,7 +49,7 @@ class TerminiAdapter(
     override fun getItemCount(): Int = termini.size
 
     // OVO DODAJ!
-    fun updateList(noviTermini: List<Termin>) {
+    fun updateList(noviTermini: List<TerminEntity>) {
         this.termini = noviTermini
         notifyDataSetChanged()
     }
