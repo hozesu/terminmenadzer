@@ -4,13 +4,28 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:textColor="#2196F3"
+    android:textStyle="bold">
+
+    <TextView
+        android:id="@+id/txtAktuelniDatum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Datum: 01.07.2024"
+        android:textColor="@color/purple_700"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"/>
 
     <TextView
         android:id="@+id/txtDatum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Termini za danas"
+        android:text="Termini za dan"
         android:textSize="22sp"
         android:layout_gravity="center_horizontal"
         android:paddingBottom="8dp"

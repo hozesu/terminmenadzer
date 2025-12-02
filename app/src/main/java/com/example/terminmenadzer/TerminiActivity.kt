@@ -3,6 +3,7 @@ package com.example.terminmenadzer.termini
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Paint
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -27,20 +28,33 @@ class TerminiActivity : AppCompatActivity() {
     private var izabranoVreme: String? = null
     private lateinit var adapter: TerminiAdapter
 
-    // Sada je izabraniDatum polje koje se menja klikom na Kalendar
     private var izabraniDatum: String = getDanasnjiDatum()
 
     private lateinit var txtDatum: TextView
+    private lateinit var txtAktuelniDatum: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_termini)
 
+        txtAktuelniDatum = findViewById(R.id.txtAktuelniDatum)
         txtDatum = findViewById(R.id.txtDatum)
         val btnKalendar = findViewById<Button>(R.id.btnKalendar)
         val recyclerTermini = findViewById<RecyclerView>(R.id.recyclerTermini)
 
-        // Prikaz naslova sa izabranim datumom
+        val danasnjiDatum = getDanasnjiDatum()
+        txtAktuelniDatum.text = "Aktuelni datum: $danasnjiDatum"
+        // Izgleda kao link
+        txtAktuelniDatum.paintFlags = txtAktuelniDatum.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        txtAktuelniDatum.setTextColor(resources.getColor(R.color.purple_700, theme))
+        txtAktuelniDatum.isClickable = true
+
+        txtAktuelniDatum.setOnClickListener {
+            izabraniDatum = danasnjiDatum
+            txtDatum.text = "Termini za dan: $izabraniDatum"
+            ucitajTermine()
+        }
+
         txtDatum.text = "Termini za dan: $izabraniDatum"
 
         btnKalendar.setOnClickListener {
@@ -64,7 +78,6 @@ class TerminiActivity : AppCompatActivity() {
 
     private fun prikaziKalendar() {
         val cal = Calendar.getInstance()
-        // Parsiraj trenutno izabrani datum ako nije današnji
         try {
             val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
             val date = sdf.parse(izabraniDatum)
@@ -83,7 +96,6 @@ class TerminiActivity : AppCompatActivity() {
         }, year, month, day).show()
     }
 
-    // Funkcija za današnji datum
     private fun getDanasnjiDatum(): String {
         val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
         return sdf.format(Date())
@@ -98,7 +110,6 @@ class TerminiActivity : AppCompatActivity() {
             val vreme = izabranoVreme
 
             if (pacijentId != -1L && vreme != null) {
-                // Prikaži dijalog za unos komentara pre snimanja termina
                 val komentarEditText = EditText(this)
                 komentarEditText.hint = "Komentar za termin (opciono)"
 
@@ -175,7 +186,7 @@ class TerminiActivity : AppCompatActivity() {
                     pacijentId = termin.pacijentId,
                     pacijentIme = ime,
                     pacijentTelefon = telefon,
-                    komentar = termin.komentar // dodato!
+                    komentar = termin.komentar
                 )
             }
             withContext(Dispatchers.Main) {
@@ -186,12 +197,10 @@ class TerminiActivity : AppCompatActivity() {
 
     private fun generisiTermineZaDan(): List<String> {
         val lista = mutableListOf<String>()
-        val satovi = 8..17 // od 08 do 17
-        val minuti = listOf(0, 30) // na svakih 30 minuta
-
+        val satovi = 8..17
+        val minuti = listOf(0, 30)
         for (sat in satovi) {
             for (minut in minuti) {
-                // poslednji termin u 17:00, IGNORIŠE 17:30
                 if (sat == 17 && minut > 0) break
                 lista.add("%02d:%02d".format(sat, minut))
             }
