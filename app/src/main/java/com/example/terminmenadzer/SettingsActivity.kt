@@ -1,37 +1,39 @@
-package com.example.terminmenadzer.podesavanja
+package com.example.terminmenadzer
 
-import android.content.Intent
+import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
-import com.example.terminmenadzer.R
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
 class SettingsActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val btnAdminLogin = findViewById<Button>(R.id.btnAdminLogin)
-        val btnBackup = findViewById<Button>(R.id.btnBackup)
-        val btnRestore = findViewById<Button>(R.id.btnRestore)
-        val btnShare = findViewById<Button>(R.id.btnShare)
-        val btnNazad = findViewById<Button>(R.id.btnNazadGlavniMeniSettings)
+        val edtNazivUstanove = findViewById<EditText>(R.id.edtNazivUstanove)
+        val btnSacuvajNaziv = findViewById<Button>(R.id.btnSacuvajNaziv)
+        val btnNapraviBackup = findViewById<Button>(R.id.btnNapraviBackup)
+        val btnVratiBackup = findViewById<Button>(R.id.btnVratiBackup)
 
-        btnAdminLogin.setOnClickListener {
-            // Otvori ekran za prijavu administratora
+        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        edtNazivUstanove.setText(prefs.getString("naziv_ustanove", ""))
+
+        btnSacuvajNaziv.setOnClickListener {
+            val naziv = edtNazivUstanove.text.toString().trim()
+            prefs.edit().putString("naziv_ustanove", naziv).apply()
+            Toast.makeText(this, "Naziv ustanove sačuvan!", Toast.LENGTH_SHORT).show()
         }
-        btnBackup.setOnClickListener {
-            // Funkcija bekapa
+
+        btnNapraviBackup.setOnClickListener {
+            // Ovdje dodaj logiku za backup
+            Toast.makeText(this, "Backup funkcija nije još implementirana.", Toast.LENGTH_SHORT).show()
         }
-        btnRestore.setOnClickListener {
-            // Funkcija uvoza iz bekapa
-        }
-        btnShare.setOnClickListener {
-            // Funkcija slanja termina putem share opcije
-        }
-        btnNazad.setOnClickListener {
-            finish()
+
+        btnVratiBackup.setOnClickListener {
+            // Ovdje dodaj logiku za vraćanje backup-a
+            Toast.makeText(this, "Restore funkcija nije još implementirana.", Toast.LENGTH_SHORT).show()
         }
     }
 }

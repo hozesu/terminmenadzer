@@ -1,40 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
     android:padding="24dp"
-    android:background="@android:color/white">
+    android:gravity="center_horizontal">
 
+    <!-- "Naziv ustanove" malo spušten -->
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tvNazivUstanove"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ZAKAZIVANJE TERMINA"
+        android:text="Naziv ustanove"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_gravity="center"
-        android:paddingBottom="32dp" />
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="48dp"/>
+
+    <!-- Dugmad centrirana po sredini ekrana uz pomoć praznog prostora pre i posle -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
     <Button
         android:id="@+id/btnTermini"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Termini"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="12dp"/>
 
     <Button
         android:id="@+id/btnPacijenti"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Pacijenti"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="12dp"/>
 
     <Button
         android:id="@+id/btnPodesavanja"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Podešavanja"
-        android:layout_marginBottom="16dp" />
+        android:text="Podešavanja"/>
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 </LinearLayout>

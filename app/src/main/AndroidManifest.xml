@@ -30,6 +30,7 @@
     <activity android:name=".pacijenti.PretragaPacijenataActivity"/>
     <activity android:name=".pacijenti.DodajPacijentaActivity"/>
     <activity android:name=".pacijenti.IzmeniPacijentaActivity"/>
+    <activity android:name=".SettingsActivity"/>
 
 </application>
 </manifest>
