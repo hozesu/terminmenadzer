@@ -11,6 +11,7 @@
 
 
 
+
     <!-- Glavna aktivnost -->
          <activity
         android:name=".MainActivity"

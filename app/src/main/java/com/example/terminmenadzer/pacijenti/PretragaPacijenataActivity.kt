@@ -33,12 +33,16 @@ class PretragaPacijenataActivity : AppCompatActivity() {
         val btnNoviPacijent = findViewById<Button>(R.id.btnNoviPacijent)
         val recycler = findViewById<RecyclerView>(R.id.recyclerPacijenti)
 
-        adapter = PacijentiAdapter(listOf()) { pacijent ->
-            val resultIntent = Intent()
-            resultIntent.putExtra("pacijent_id", pacijent.id)
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish()
-        }
+        adapter = PacijentiAdapter(
+            pacijenti = listOf(),
+            prikaziIzmeni = false,
+            onItemClick = { pacijent ->
+                val resultIntent = Intent()
+                resultIntent.putExtra("pacijent_id", pacijent.id)
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
+            }
+        )
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
 

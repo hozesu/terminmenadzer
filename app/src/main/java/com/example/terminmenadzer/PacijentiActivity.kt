@@ -29,19 +29,20 @@ class PacijentiActivity : AppCompatActivity() {
         val btnSledeca = findViewById<Button>(R.id.btnSledecaStrana)
         val btnNoviPacijent = findViewById<Button>(R.id.btnNoviPacijent)
 
-        // NOVO: koristi oba lambda konstruktora iz adaptera
+        // KREIRAJ ADAPTER sa svim parametrima, OBAVEZNO prikaziIzmeni = true
         adapter = PacijentiAdapter(
-            listOf(),
+            pacijenti = listOf(),
+            prikaziIzmeni = true,
             onIzmeniClick = { pacijent ->
                 val intent = Intent(this, com.example.terminmenadzer.pacijenti.IzmeniPacijentaActivity::class.java)
                 intent.putExtra("id", pacijent.id)
                 startActivity(intent)
             },
             onItemClick = { pacijent ->
-                // Po potrebi, ovde možeš otvoriti detalje, prikazati dijalog, itd.
-                // Ako ne treba ništa, ostavi prazno
+                // Ovde možeš, recimo, prikazati detalje pacijenta ili ostaviti prazno
             }
         )
+
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
 
@@ -78,7 +79,6 @@ class PacijentiActivity : AppCompatActivity() {
             val lista = DatabaseProvider.db.pacijentDao().dajPacijenteStranica(brojPoStrani, offset)
             Log.d("PacijentiActivity", "Učitano pacijenata: ${lista.size}")
             adapter.updateList(lista)
-            // Disable/enable dugmiće...
             findViewById<Button>(R.id.btnPrethodnaStrana).isEnabled = trenutnaStrana > 0
             findViewById<Button>(R.id.btnSledecaStrana).isEnabled = lista.size == brojPoStrani
         }

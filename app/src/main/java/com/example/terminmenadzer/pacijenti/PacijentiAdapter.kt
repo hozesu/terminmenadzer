@@ -10,6 +10,7 @@ import com.example.terminmenadzer.R
 
 class PacijentiAdapter(
     private var pacijenti: List<PacijentEntity>,
+    private val prikaziIzmeni: Boolean,
     private val onIzmeniClick: (PacijentEntity) -> Unit = {},
     private val onItemClick: (PacijentEntity) -> Unit = {}
 ) : RecyclerView.Adapter<PacijentiAdapter.ViewHolder>() {
@@ -31,6 +32,8 @@ class PacijentiAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val pacijent = pacijenti[position]
+        val btnIzmeni = holder.itemView.findViewById<Button>(R.id.btnIzmeniPacijenta)
+        btnIzmeni.visibility = if (prikaziIzmeni) View.VISIBLE else View.GONE
         holder.tvImePrezime.text = "${pacijent.ime} ${pacijent.prezime}"
         holder.tvDatumRodjenja.text = pacijent.datumRodjenja
         holder.tvTelefon.text = pacijent.telefon
@@ -38,13 +41,14 @@ class PacijentiAdapter(
         holder.btnIzmeniPacijenta.setOnClickListener {
             onIzmeniClick(pacijent)
         }
+
         holder.itemView.setOnClickListener {
             onItemClick(pacijent)
         }
     }
 
     fun updateList(novaLista: List<PacijentEntity>) {
-        this.pacijenti = novaLista
+        novaLista.also { this.pacijenti = it }
         notifyDataSetChanged()
     }
 }
